@@ -1,0 +1,24 @@
+[ API Layer (Function App / API App ) ]
+       │
+       │ read(id)
+       │───────────┐
+                   │
+         ┌────────▼────────┐
+         │ Cosmos DB (Hot: <3mo) │  ← Original billing container
+         └────────▲────────┘
+                  │ Not found
+                  │
+         ┌────────▼────────┐
+         │ Table Storage Index │  keys: id → blobPath, metadata
+         └────────▲────────┘
+                  │
+         ┌────────▼────────┐
+         │ Blob Storage (billing‑archive) │ archived JSON blobs
+         └──────────────────────────┘
+
+
+API → Cosmos DB
+Durable function queries Cosmos every day for records older than 3 months
+Copies JSON to Blob (cool/archive), adds entry to Table Storage, then deletes from Cosmos
+
+
