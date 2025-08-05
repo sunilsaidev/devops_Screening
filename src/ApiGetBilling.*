@@ -1,0 +1,9 @@
+def get_billing(id):
+    doc = cosmos.read(id)
+    if doc:
+        return doc
+    idx = table.get(partition="billing", row_key=id)
+    if not idx:
+        raise NotFound()
+    blob_json = blob.download(idx.BlobPath)
+    return json_parse(blob_json)
