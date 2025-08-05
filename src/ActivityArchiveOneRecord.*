@@ -1,0 +1,9 @@
+def archive_one_record(id):
+    doc = cosmos.read(id)
+    if not doc:
+        return
+    blob_path = f"{doc['createdDate'][:10]}/{id}.json"
+    blob.upload(blob_path, json_encode(doc))
+    table.insert_row(partition="billing", row_key=id,
+                     BlobPath=blob_path, CreatedDate=doc['createdDate'])
+    cosmos.delete(id)
