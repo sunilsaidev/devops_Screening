@@ -1,0 +1,5 @@
+def orchestrator_cutoff():
+    cutoff = utcnow() - timedelta(days=90)
+    ids = query_cosmos_ids_older_than(cutoff)
+    for id in ids:
+        run_activity("archive_one_record", id)
